@@ -8,14 +8,21 @@ from .business_logic import ChatLogic
 from .models import Conversation, Message
 
 
-class ConversationView(APIView):
-    def get(self,request, id):
-        try:
-            conversation = Conversation.objects.get(id=id)
-            serializer = ConversationSerializer(conversation)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Conversation.DoesNotExist:
-            return Response('conversation not exist', status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def list_conversation(request):
+    conversations = Conversation.objects.all()
+    serializer = ConversationSerializer(conversations, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_conversation(request, id):
+    try:
+        conversation = Conversation.objects.get(id=id)
+        serializer = ConversationSerializer(conversation)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Conversation.DoesNotExist:
+        return Response('conversation not exist', status=status.HTTP_404_NOT_FOUND)
 
 # @api_view(['POST'])
 # def chat(request):

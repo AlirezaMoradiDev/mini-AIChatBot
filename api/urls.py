@@ -3,5 +3,6 @@ from . import views
 
 
 urlpatterns = [
-    path('con/<int:id>', views.ConversationView.as_view())
+    path('lstcon', views.list_conversation),
+    path('con/<int:id>', views.get_conversation)
 ]
