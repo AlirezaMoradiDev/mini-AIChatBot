@@ -1,19 +1,24 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from .serializres import MessageSerializer, ConversationSerializer
 from .business_logic import ChatLogic
 from .models import Conversation, Message
+from rest_framework.pagination import PageNumberPagination
 
-
+class MyPageNumberPagination(PageNumberPagination):
+    page_size = 1
 
 @api_view(['GET'])
 def list_conversation(request):
-    conversations = Conversation.objects.all()
-    serializer = ConversationSerializer(conversations, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    paginator = MyPageNumberPagination() #create instance
+    conversations = Conversation.objects.all().order_by('-created_at', '-id')
+    page = paginator.paginate_queryset(conversations, request) # paginator queryset
+    serializer = ConversationSerializer(page, many=True)
+    return paginator.get_paginated_response(serializer.data) #response with pagination
 
 @api_view(['GET'])
 def get_conversation(request, id):
