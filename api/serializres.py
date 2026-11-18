@@ -10,9 +10,11 @@ class MessageSerializer(serializers.ModelSerializer):
 
 class ConversationSerializer(serializers.ModelSerializer):
     messages = MessageSerializer(source='message_set', many=True, read_only=True)  # For displaying nested messages
+    username = serializers.CharField(source='user.username', read_only=True)
+
     class Meta:
         model = Conversation
-        fields = ["id", "created_at", "updated_at", "messages"]
+        fields = ["id", "created_at", "updated_at", "messages", "user", "username"]
 
 class Chat(serializers.Serializer):
     message = serializers.CharField(required=True)
